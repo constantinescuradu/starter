@@ -7,8 +7,12 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.Serializable;
 
-public class AddBookVerticle extends AbstractVerticle {
+
+public class AddBookVerticle extends AbstractVerticle{
   final Router router;
 
   public AddBookVerticle(Router router){
@@ -33,13 +37,23 @@ public class AddBookVerticle extends AbstractVerticle {
     String bookName = body.getString("bookName");
     String author = body.getString("author");
 
-    //aici ma gandesc sa serializez tot jsonarray-ul intr-un text,
+    //aici ma gandesc sa scriu tot jsonarray-ul intr-un text,
    // ca in momentul in care verticle-ul primeste post request, fiecare carte sa fie stocata in memorie
 
     arrayofBooks.add(body);
+
+    try{
+
+      File jsonfile = new File("Jsonfile.txt");
+      FileWriter fileWriter = new FileWriter(jsonfile);
+      fileWriter.write(String.valueOf(arrayofBooks));
+      fileWriter.flush();
+      fileWriter.close();
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
     context.response().end("Book is: " + arrayofBooks);
   }
-
-
 }
 
