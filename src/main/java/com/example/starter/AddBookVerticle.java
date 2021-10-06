@@ -28,11 +28,14 @@ public class AddBookVerticle extends AbstractVerticle {
   }
 
   public void postData(RoutingContext context){
-
     JsonArray arrayofBooks = new JsonArray();
     JsonObject body = context.getBodyAsJson();
     String bookName = body.getString("bookName");
     String author = body.getString("author");
+
+    //aici ma gandesc sa serializez tot jsonarray-ul intr-un text,
+   // ca in momentul in care verticle-ul primeste post request, fiecare carte sa fie stocata in memorie
+
     arrayofBooks.add(body);
     context.response().end("Book is: " + arrayofBooks);
   }
