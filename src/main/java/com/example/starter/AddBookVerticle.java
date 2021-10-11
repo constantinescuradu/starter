@@ -6,10 +6,10 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.io.Serializable;
 
 
 public class AddBookVerticle extends AbstractVerticle{
@@ -20,7 +20,7 @@ public class AddBookVerticle extends AbstractVerticle{
   }
 
   @Override
-  public void start() throws Exception {
+  public void start() {
     router.route().handler(BodyHandler.create());
     router.post("/addbooks").handler(this::postData);
 
@@ -31,20 +31,15 @@ public class AddBookVerticle extends AbstractVerticle{
     System.out.println("Adding Books server started on 8080");
   }
 
-  public void postData(RoutingContext context){
+  public void postData(@NotNull RoutingContext context){
     JsonArray arrayofBooks = new JsonArray();
     JsonObject body = context.getBodyAsJson();
     String bookName = body.getString("bookName");
     String author = body.getString("author");
-
-    //aici ma gandesc sa scriu tot jsonarray-ul intr-un text,
-   // ca in momentul in care verticle-ul primeste post request, fiecare carte sa fie stocata in memorie
-
     arrayofBooks.add(body);
 
     try{
-
-      File jsonfile = new File("Jsonfile.txt");
+      File jsonfile = new File("Jsonfile.json");
       FileWriter fileWriter = new FileWriter(jsonfile);
       fileWriter.write(String.valueOf(arrayofBooks));
       fileWriter.flush();
@@ -55,5 +50,7 @@ public class AddBookVerticle extends AbstractVerticle{
     }
     context.response().end("Book is: " + arrayofBooks);
   }
+
 }
+
 

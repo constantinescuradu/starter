@@ -1,8 +1,18 @@
 package com.example.starter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.http.HttpServerResponse;
+import io.vertx.core.json.Json;
+import io.vertx.core.json.JsonArray;
 import io.vertx.ext.web.Router;
+import io.vertx.ext.web.RoutingContext;
+import io.vertx.ext.web.handler.BodyHandler;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
+import java.io.*;
 
 public class ManageBookVerticle extends AbstractVerticle {
 
@@ -11,27 +21,33 @@ public class ManageBookVerticle extends AbstractVerticle {
   public ManageBookVerticle(Router router){
     this.router = router;
   }
-
   @Override
-  public void start() throws Exception {
- /*   router.route("/managebooks").handler(context1 -> {
-      context1.response()
-        .putHeader("content-type","text/plain")
-        .end("Managing Books" + context1.queryParam("name"));
-    });
-*/
-
-    router.get("/managebooks").handler(context1 -> {
-      HttpServerResponse httpServerResponse = context1.response();
-      httpServerResponse.setChunked(true);
-      httpServerResponse.write("GET Triggered\n");
-      httpServerResponse.end();
-
-    });
+  public void start() {
+    router.route().handler(BodyHandler.create());
+    router.get("/managebooks").handler(this::fetchData);
     vertx.createHttpServer()
       .requestHandler(router)
-      .listen(8080);
-
+      .listen(8081);
     System.out.println("Managing Books server started on 8080");
+  }
+
+  public void fetchData(RoutingContext context) {
+
+    try{
+      JSONParser parser = new JSONParser();
+      JSONArray bookarray = (JSONArray) parser.parse(new FileReader("C:\\Users\\rconsta2\\IdeaProjects\\starter\\Jsonfile.json"));
+
+      for(Object object: bookarray){
+        JSONObject book = (JSONObject) object;
+
+        String bookName = (String) book.get("bookName");
+        System.out.println(bookName);
+
+        String author = (String) book.get("author");
+        System.out.println(author);
+      }
+    }catch (Exception e){
+      System.out.println("An Exception has occured");
+    }
   }
 }
