@@ -5,7 +5,7 @@ import io.vertx.ext.web.Router;
 
 public class MainVerticle extends AbstractVerticle {
   @Override
-  public void start() throws Exception {
+  public void start() {
 
     // Create a Router
     Router router = Router.router(vertx);
